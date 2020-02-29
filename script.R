@@ -169,6 +169,8 @@ modelNN(train,competition)
 
 ## Vous allez maintenant utiliser la représentation HOG des images afin d'essayer d'améliorer votre score.
 library(OpenImageR)
+library(e1071)
+
 # Rappel : 
 # La représentation HOG prend deux paramètres cells et orientation (que j'appelle cel et ori)
 # Par exemple, on peut commencer avec
@@ -179,6 +181,7 @@ idx = 1; # on transforme la première image
 h = HOG(matrix(as.numeric(dataset[idx,2:785]), nrow = 28, byrow = T), cells = cel, orientations = ori)
 
 # Pour transformer toutes les images de dataset:
+
 hog_data = matrix(0,nrow(dataset),cel*cel*ori)
 for(i in 1:nrow(dataset)){hog_data[i,] = HOG(matrix(as.numeric(dataset[i,2:785]), nrow = 28, byrow = T), cells = cel, orientations = ori)}
 hog_data  = data.frame("label" = as.factor(dataset$label), hog_data)
@@ -196,7 +199,7 @@ hog_competition  = data.frame(hog_competition)
 # Vous pouvez changer les paramètres cel et ori 
 
 
-#### S�paration AVT
+#### S?paration AVT
 
 set.seed(20) 
 nall = nrow(hog_data) 
@@ -228,7 +231,7 @@ resultArbre_hog = niveauElagageErreurG(modeleArbre_hog,hog_train,hog_valid,hog_t
 resultSVM_radial_hog = GeneSVM (hog_train,hog_valid,hog_test,positionCible,"radial",hog_competition)
 resultSVM_polynomial_hog = GeneSVM (hog_train,hog_valid,hog_test,positionCible,"polynomial",hog_competition)
 
-
+resultSVM_test = tuneSvm_radialTest(hog_train,hog_valid,hog_competition)
 
 ############################################### KNN
 
@@ -251,6 +254,6 @@ erreurG= sum(predTest != hog_test[,positionCible])
 
 resultRegMultiClass = data.frame("regLineMultiC","",errorV,erreurG)
 
-#################################################### For�t
+#################################################### For?t
 
 resultForet_hog = foretByMax(hog_train,hog_valid,hog_test,positionCible,hog_competition)
